@@ -3,7 +3,7 @@ const MAX_NOTE = 84;
 
 // Using the Improv RNN pretrained model from https://github.com/tensorflow/magenta/tree/master/magenta/models/improv_rnn
 let rnn = new mm.MusicRNN(
-  'https://Jula1298.github.io/AIMuzyka/mag/basic_rnn.mag'
+  'https://jula1298.github.io/Muzyka/lookback'
 );
 let temperature = 1.1;
 
