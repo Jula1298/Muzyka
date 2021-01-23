@@ -3,13 +3,13 @@ const MAX_NOTE = 84;
 
 // Using the Improv RNN pretrained model from https://github.com/tensorflow/magenta/tree/master/magenta/models/improv_rnn
 let rnn = new mm.MusicRNN(
-  'https://jula1298.github.io/Muzyka/lookback'
+  'https://jula1298.github.io/Muzyka/basic_rnn'
 );
 let temperature = 1.1;
 
-let reverb = new Tone.Convolver('https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699/hm2_000_ortf_48k.mp3').toMaster();
-reverb.wet.value = 0.25;
-let sampler = new Tone.Sampler({
+let reverb = new mm.Player.tone.Convolver('https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699/hm2_000_ortf_48k.mp3').toMaster();
+//reverb.wet.value = 0.25;
+let sampler = new mm.Player.tone.Sampler({
   C3: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699/plastic-marimba-c3.mp3',
   'D#3': 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699/plastic-marimba-ds3.mp3',
   'F#3': 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/969699/plastic-marimba-fs3.mp3',
@@ -35,8 +35,8 @@ let humanPlayer = buildKeyboard(document.querySelector('.human-bg .player'));
 
 let currentSeed = [];
 let stopCurrentSequenceGenerator;
-let synthFilter = new Tone.Filter(300, 'lowpass').connect(
-  new Tone.Gain(0.4).toMaster()
+let synthFilter = new mm.Player.tone.Filter(300, 'lowpass').connect(
+  new mm.Player.tone.Gain(0.4).toMaster()
 );
 let synthConfig = {
   oscillator: { type: 'fattriangle' },
@@ -82,9 +82,9 @@ function getSeedIntervals(seed) {
   for (let i = 0; i < seed.length - 1; i++) {
     let rawInterval = seed[i + 1].time - seed[i].time;
     let measure = _.minBy(['8n', '4n'], subdiv =>
-      Math.abs(rawInterval - Tone.Time(subdiv).toSeconds())
+      Math.abs(rawInterval - mm.Player.tone.Time(subdiv).toSeconds())
     );
-    intervals.push(Tone.Time(measure).toSeconds());
+    intervals.push(mm.Player.tone.Time(measure).toSeconds());
   }
   return intervals;
 }
@@ -100,7 +100,7 @@ function getSequenceLaunchWaitTime(seed) {
 
 function getSequencePlayIntervalTime(seed) {
   if (seed.length <= 1) {
-    return Tone.Time('8n').toSeconds();
+    return mm.Player.tone.Time('8n').toSeconds();
   }
   let intervals = getSeedIntervals(seed).sort();
   return _.first(intervals);
@@ -166,7 +166,7 @@ function startSequenceGenerator(seed) {
     if (!running) return;
     if (generatedSequence.length < 10) {
        lastGenerationTask = rnn
-        .continueSequence(seedSeq, 20, temperature, [chord])
+        .continueSequence(seedSeq, 20, temperature)//, [chord])
         .then(genSeq => {
           generatedSequence = generatedSequence.concat(
             genSeq.notes.map(n => n.pitch)
@@ -189,23 +189,23 @@ function startSequenceGenerator(seed) {
   }
 
   setTimeout(generateNext, launchWaitTime * 1000);
-  let consumerId = Tone.Transport.scheduleRepeat(
+  let consumerId = mm.Player.tone.Transport.scheduleRepeat(
     consumeNext,
     playIntervalTime,
-    Tone.Transport.seconds + launchWaitTime
+    mm.Player.tone.Transport.seconds + launchWaitTime
   );
 
   return () => {
     running = false;
     if (clearOldSeed) currentSeed=[]
-    Tone.Transport.clear(consumerId);
+    mm.Player.tone.Transport.clear(consumerId);
     console.log("stopSequenceGenerator");
   };
 }
 
 function updateChord({ add = null, remove = null }) {
   if (add) {
-    currentSeed.push({ note: add, time: Tone.now() });
+    currentSeed.push({ note: add, time: mm.Player.tone.now() });
   }
   if (remove && _.some(currentSeed, { note: remove })) {
     _.remove(currentSeed, { note: remove });
@@ -226,12 +226,13 @@ function updateChord({ add = null, remove = null }) {
 }
 
 function humanKeyDown(note, velocity = 0.7) {
+  StartAudioContext(mm.Player.tone.context, document.documentElement);
   console.log("keydown");
   if (note < MIN_NOTE || note > MAX_NOTE) return;
-  let freq = Tone.Frequency(note, 'midi');
-  let synth = new Tone.Synth(synthConfig).connect(synthFilter);
+  let freq = mm.Player.tone.Frequency(note, 'midi');
+  let synth = new mm.Player.tone.Synth(synthConfig).connect(synthFilter);
   synthsPlaying[note] = synth;
-  synth.triggerAttack(freq, Tone.now(), velocity);
+  synth.triggerAttack(freq, mm.Player.tone.now(), velocity);
   sampler.triggerAttack(freq);
   updateChord({ add: note });
   humanPlayer[note - MIN_NOTE].classList.add('down');
@@ -252,7 +253,7 @@ function humanKeyUp(note) {
 
 function machineKeyDown(note, time) {
   if (note < MIN_NOTE || note > MAX_NOTE) return;
-  sampler.triggerAttack(Tone.Frequency(note, 'midi'));
+  sampler.triggerAttack(mm.Player.tone.Frequency(note, 'midi'));
   animatePlay(onScreenKeyboard[note - MIN_NOTE], note, false);
   animateMachine(machinePlayer[note - MIN_NOTE]);
 }
@@ -420,20 +421,19 @@ function generateDummySequence() {
   // Generate a throwaway sequence to get the RNN loaded so it doesn't
   // cause jank later.
   return rnn.continueSequence(
-    buildNoteSequence([{ note: 60, time: Tone.now() }]),
+    buildNoteSequence([{ note: 60, time: mm.Player.tone.now() }]),
     20,
-    temperature,
-    ['Cm']
+    temperature
   );
 }
 
-let bufferLoadPromise = new Promise(res => Tone.Buffer.on('load', res));
-Promise.all([bufferLoadPromise, rnn.initialize()])
+
+const player = new mm.Player();
+
+Promise.all([rnn.initialize(),mm.tf.setBackend('cpu')])
   .then(generateDummySequence)
   .then(() => {
-    Tone.Transport.start();
+    mm.Player.tone.Transport.start();
     onScreenKeyboardContainer.classList.add('loaded');
     document.querySelector('.loading').remove();
   });
-
-StartAudioContext(Tone.context, document.documentElement);

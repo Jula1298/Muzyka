@@ -7,5 +7,5 @@
       "maxPitch": 83
     }
   },
-  "chordEncoder": "PitchChordEncoder"
+  "chordEncoder": null
 }
