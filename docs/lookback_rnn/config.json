@@ -5,7 +5,7 @@
  "type": "MelodyConverter",
  "args": { 
  "ignorePolyphony": true,
- "maxPitch": 64,
+ "maxPitch": 54,
  "minPitch": 1}
  }
 }
