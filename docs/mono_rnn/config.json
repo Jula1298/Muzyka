@@ -3,7 +3,7 @@
   "dataConverter": {
     "type": "MelodyConverter",
     "args": {
-      "minPitch": 0,
+      "minPitch": 48,
       "maxPitch": 128
     }
   },
