@@ -3,8 +3,8 @@
   "dataConverter": {
     "type": "MelodyConverter",
     "args": {
-      "minPitch": 48,
-      "maxPitch": 83
+      "minPitch": 1,
+      "maxPitch": 128
     }
   },
   "chordEncoder": "PitchChordEncoder"
