@@ -1,11 +1,11 @@
 {
-  "type": "MusicRNN",
-  "dataConverter": {
-    "type": "MelodyConverter",
-    "args": {
-      "minPitch": 48,
-      "maxPitch": 83
-    }
-  },
-  "chordEncoder": "PitchChordEncoder"
+ "type": "MusicRNN", 
+ "chordEncoder": null,
+ "dataConverter": {
+ "type": "MelodyConverter",
+ "args": { 
+ "ignorePolyphony": true,
+ "maxPitch": 127,
+ "minPitch": 1}
+ }
 }
