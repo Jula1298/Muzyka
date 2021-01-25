@@ -6,6 +6,6 @@
  "args": { 
  "ignorePolyphony": true,
  "maxPitch": 128,
- "minPitch": 48}
+ "minPitch": 1}
  }
 }
