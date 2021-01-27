@@ -18,10 +18,7 @@ html {
   color: white;
   font-family: 'Abel', sans-serif;
 }
-a,
-a:visited {
-  color: white;
-}
+
 
 .machine-bg {
   position: absolute;
@@ -35,38 +32,20 @@ a:visited {
   justify-content: center;
   align-items: center;
 }
+
 .human-bg {
   position: absolute;
   top: 50%;
   left: 0;
   right: 0;
   height: 50%;
-  background: linear-gradient(to left, #000000, #323232);
+  background: linear-gradient(to right, #000000, #323232);
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.controls {
-  z-index: 4;
-  font-size: 16px;
-  text-align: center;
-  transition: opacity 0.5s ease-out;
-  opacity: 1;
-}
-.ui-hidden .controls {
-  opacity: 0;
-}
-.machine-bg .controls {
-  margin-bottom: 125px;
-}
-.controls #temperature {
-  width: 200px;
-}
-.human-bg .controls {
-  margin-top: 125px;
-}
 
 .machine-bg .player,
 .human-bg .player {
@@ -95,7 +74,7 @@ a:visited {
   position: absolute;
   left: 5vw;
   width: 90vw;
-  top: calc(50% - 125px);
+  top: calc(25% - 125px);
   height: 250px;
   opacity: 0;
   transition: opacity 0.7s ease-in;
@@ -106,7 +85,7 @@ a:visited {
 
 .keyboard .key {
   position: absolute;
-  top: 0;
+  top: 80;
   height: 100%;
   box-sizing: border-box;
   z-index: 1;
@@ -136,3 +115,53 @@ a:visited {
   color: white;
   font-size: 40px;
 }
+
+.button {
+  border: none;
+  width: 240px;
+  color: white;
+  padding: 18px 32px;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 30px;
+  margin-left: 95px;
+  margin-top: 90px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  background-color: rgb(48, 48, 48);
+  color: white;
+  border: 2px solid black;
+}
+
+
+.button1 {
+  border: 2px solid black;
+  position:  relative; bottom: 0px;
+  margin-top: 50px;
+  margin-left: 270px;
+}
+
+.button2 {
+  border: 2px solid black;
+  position:  relative; bottom: 0px;
+  margin-top: 50px;
+  margin-left: 10px;
+}
+
+.button5 {
+  border: 2px solid black;
+  position:  relative; bottom: 0px;
+  margin-top: 50px;
+  margin-left: 10px;
+}
+
+.button4 {
+  border: 2px solid black;
+  position:  relative; bottom: 0px;
+  margin-top: 50px;
+  margin-left: 40%;
+}
+

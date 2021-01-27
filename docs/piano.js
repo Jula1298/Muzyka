@@ -1,9 +1,35 @@
 const MIN_NOTE = 48;
 const MAX_NOTE = 84;
 
+if (localStorage.getItem("myElement")==null)
+{
+  localStorage.setItem("myElement", "https://jula1298.github.io/Muzyka/basic_rnn");
+}
+
+
+function myfunction(choice){
+  if (choice == 1)
+  {
+    localStorage.setItem("myElement", "https://jula1298.github.io/Muzyka/basic_rnn");
+  }
+  else if (choice == 2)
+  {
+    localStorage.setItem("myElement", "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn");
+  }
+  else if (choice == 4)
+  {
+    localStorage.setItem("myElement", "https://jula1298.github.io/Muzyka/mono_rnn");
+  }
+  location.reload();
+}
+
+
+
+const element = localStorage.getItem("myElement");
+
 // Using the Improv RNN pretrained model from https://github.com/tensorflow/magenta/tree/master/magenta/models/improv_rnn
 let rnn = new mm.MusicRNN(
-  'https://jula1298.github.io/Muzyka/basic_rnn'
+  element
 );
 let temperature = 1.1;
 
@@ -43,6 +69,7 @@ let synthConfig = {
   envelope: { attack: 3, sustain: 1, release: 1 }
 };
 let synthsPlaying = {};
+
 
 function isAccidental(note) {
   let pc = note % 12;
@@ -171,11 +198,11 @@ function startSequenceGenerator(seed) {
           generatedSequence = generatedSequence.concat(
             genSeq.notes.map(n => n.pitch)
           );
-          setTimeout(generateNext, generationIntervalTime * 1000);
+          setTimeout(generateNext, generationIntervalTime * 100);
         });
         clearOldSeed=true;
     } else {
-      setTimeout(generateNext, generationIntervalTime * 1000);
+      setTimeout(generateNext, generationIntervalTime * 100);
     }
   }
 
@@ -393,16 +420,16 @@ document.documentElement.addEventListener('touchend', updateTouchedNotes);
 
 // Temperature control
 
-let tempSlider = new mdc.slider.MDCSlider(
+/*let tempSlider = new mdc.slider.MDCSlider(
   document.querySelector('#temperature')
 );
-tempSlider.listen('MDCSlider:change', () => temperature = tempSlider.value);
+tempSlider.listen('MDCSlider:change', () => temperature = tempSlider.value);*/
 
 // Controls hiding
 
 let container = document.querySelector('.container');
 
-function hideUI() {
+/*function hideUI() {
   container.classList.add('ui-hidden');
 }
 let scheduleHideUI = _.debounce(hideUI, 5000);
@@ -410,10 +437,11 @@ container.addEventListener('mousemove', () => {
   container.classList.remove('ui-hidden');
   scheduleHideUI();
 });
+
 container.addEventListener('touchstart', () => {
   container.classList.remove('ui-hidden');
   scheduleHideUI();
-});
+});*/
 
 // Startup
 
